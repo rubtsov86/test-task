@@ -1,7 +1,6 @@
 import { createDiv } from "./createDiv.js";
 
 const divRoot = document.getElementById("root");
-let currentDivOnClick = null;
 
 const arr = Array.from({ length: 100 });
 
@@ -14,27 +13,30 @@ divRoot.insertAdjacentHTML("beforeend", galleryOfDiv);
 divRoot.addEventListener("click", onClick);
 
 function onClick(event) {
-  console.log(currentDivOnClick === event.target.id);
+  if (event.target.classList.contains("selected")) {
+    let previousSibling = null;
 
-  if (currentDivOnClick === event.target.id) {
-    const newArr = [
-      ...arrOfDiv.slice(0, event.target.id),
-      arrOfDiv[event.target.id],
-      ...arrOfDiv.slice(Number(event.target.id) + 1, arrOfDiv.length),
-    ];
-    divRoot.innerHTML = newArr.join("");
-    currentDivOnClick = event.target.id;
+    for (let i = 1; i <= event.target.id; i += 1) {
+      previousSibling = document.getElementById(event.target.id - i);
+      if (!previousSibling.classList.contains("selected")) {
+        break;
+      }
+    }
 
-    currentDivOnClick = null;
+    console.log(previousSibling);
+
+    if (!previousSibling) {
+      event.target.classList.remove("selected");
+      return;
+    }
+
+    previousSibling.after(event.target);
+
+    event.target.classList.remove("selected");
+
     return;
   }
 
-  const newArr = [
-    arrOfDiv[event.target.id],
-    ...arrOfDiv.slice(0, event.target.id),
-    ...arrOfDiv.slice(Number(event.target.id) + 1, arrOfDiv.length),
-  ];
-
-  divRoot.innerHTML = newArr.join("");
-  currentDivOnClick = event.target.id;
+  event.target.classList.add("selected");
+  event.target.parentNode.prepend(event.target);
 }
