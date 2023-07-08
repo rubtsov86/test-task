@@ -23,10 +23,12 @@ function onClick(event) {
       }
     }
 
-    console.log(previousSibling);
-
     if (!previousSibling) {
       event.target.classList.remove("selected");
+
+      if (Number(event.target.id) === 0 && event.target.previousSibling) {
+        event.target.parentNode.prepend(event.target);
+      }
       return;
     }
 
