@@ -5,12 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>test-task</title>
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/styles.css" />
+    <style type="text/css">
+      .item {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(237, 245, 243);
+        border: 1px solid aqua;
+      }
+
+      .selected {
+        background-color: aquamarine;
+      }
+    </style>
   </head>
   <body>
-   <div id="root"></div>
-    <script src="js/index.js" type="module"></script>
+    <div id="root"></div>
+
+    <script type="text/javascript">
+      // creating and render 100 div
+      const divRoot = document.getElementById("root");
+
+      function createDiv(divId) {
+        return `<div class="item" id=${divId}>div ${divId}</div>`;
+      }
+
+      const arr = Array.from({ length: 100 });
+      const markupOfDiv = arr.map((_, id) => createDiv(id)).join("");
+
+      divRoot.insertAdjacentHTML("beforeend", markupOfDiv);
+
+      // onClick
+
+      divRoot.addEventListener("click", onClick);
+
+      function onClick(event) {
+        // if div was selected
+        if (event.target.classList.contains("selected")) {
+          let previousSibling = null;
+
+          // search previous sibling (where to insert div)
+          for (let i = 1; i <= event.target.id; i += 1) {
+            previousSibling = document.getElementById(event.target.id - i);
+            if (!previousSibling.classList.contains("selected")) {
+              break;
+            }
+          }
+
+          // if previous sibling was selected
+          if (!previousSibling) {
+            event.target.classList.remove("selected");
+
+            if (Number(event.target.id) === 0 && event.target.previousSibling) {
+              event.target.parentNode.prepend(event.target);
+            }
+            return;
+          }
+
+          previousSibling.after(event.target);
+          event.target.classList.remove("selected");
+
+          return;
+        }
+
+        // if div wasn't selected
+        event.target.classList.add("selected");
+        event.target.parentNode.prepend(event.target);
+      }
+    </script>
   </body>
 </html>
-
